@@ -1,5 +1,30 @@
--- Load Rayfield 7R Beta (adjust URL if needed)
-local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/7R-Dev/Rayfield-Beta/main/source.lua"))()
+local Rayfield = loadstring(game:HttpGet('https://raw.githubusercontent.com/UI-Interface/CustomFIeld/main/RayField.lua'))()
+
+local Window = Rayfield:CreateWindow({
+   Name = "Unwavering Soul",
+   LoadingTitle = "Smyw guys",
+   LoadingSubtitle = "by Greck",
+   ConfigurationSaving = {
+      Enabled = true,
+      FolderName = "Deltale Hub", -- Create a custom folder for your hub/game
+      FileName = "Deltale Hub"
+   },
+   Discord = {
+      Enabled = false,
+      Invite = "sirius", -- The Discord invite code, do not include discord.gg/
+      RememberJoins = true -- Set this to false to make them join the discord every time they load it up
+   },
+   KeySystem = false, -- Set this to true to use our key system
+   KeySettings = {
+      Title = "Sirius Hub",
+      Subtitle = "Key System",
+      Note = "Join the discord (discord.gg/sirius)",
+      FileName = "SiriusKey",
+      SaveKey = true,
+      GrabKeyFromSite = false, -- If this is true, set Key below to the RAW site you would like Rayfield to get the key from
+      Key = "Hello"
+   }
+})
 
 local Players = game:GetService("Players")
 local player = Players.LocalPlayer
@@ -17,7 +42,7 @@ local function enlargeBossTorsos(slot)
     for _, boss in ipairs(bossModel:GetChildren()) do
         local torso = boss:FindFirstChild("Torso")
         if torso and torso:IsA("BasePart") then
-            torso.Size = Vector3.new(25, 25, 25)
+            torso.Size = Vector3.new(2048, 2048, 2048)
             torso.CanCollide = false
         end
     end
@@ -46,35 +71,19 @@ local function startLoop()
     end)
 end
 
--- Create Window
-local Window = Rayfield:CreateWindow({
-    Name = "Boss Torso Enlarger",
-    LoadingTitle = "Loading Boss Torso Enlarger...",
-    LoadingSubtitle = "By ChatGPT",
-    ConfigurationSaving = {
-        Enabled = true,
-        FolderName = "BossTorsoEnlarger",
-        FileName = "Config"
-    },
-    Discord = {
-        Enabled = false
-    }
-})
-
 -- Create Tab
 local MainTab = Window:CreateTab("Main")
 
 -- Add Toggle
 MainTab:CreateToggle({
-    Name = "Enable Enlarger",
+    Name = "Hitbox Expander",
     CurrentValue = false,
-    Flag = "ToggleEnlarger",
+    Flag = "ToggleExpander",
     Callback = function(value)
         ToggleRunning = value
         if ToggleRunning then
             startLoop()
         else
-            -- Loop will stop naturally because ToggleRunning = false
             if LoopThread then
                 task.cancel(LoopThread)
                 LoopThread = nil
