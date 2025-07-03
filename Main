@@ -1,0 +1,84 @@
+-- Load Rayfield 7R Beta (adjust URL if needed)
+local Rayfield = loadstring(game:HttpGet("https://raw.githubusercontent.com/7R-Dev/Rayfield-Beta/main/source.lua"))()
+
+local Players = game:GetService("Players")
+local player = Players.LocalPlayer
+
+local ToggleRunning = false
+local LoopThread
+
+local function enlargeBossTorsos(slot)
+    local bosses = slot:FindFirstChild("Bosses")
+    if not bosses then return end
+
+    local bossModel = bosses:FindFirstChild("1")
+    if not bossModel then return end
+
+    for _, boss in ipairs(bossModel:GetChildren()) do
+        local torso = boss:FindFirstChild("Torso")
+        if torso and torso:IsA("BasePart") then
+            torso.Size = Vector3.new(25, 25, 25)
+            torso.CanCollide = false
+        end
+    end
+end
+
+local function startLoop()
+    LoopThread = task.spawn(function()
+        while ToggleRunning do
+            local activeBosses = workspace:FindFirstChild("ActiveBosses")
+            if activeBosses then
+                for i = 1, 12 do
+                    local slot = activeBosses:FindFirstChild("Slot"..i)
+                    if slot then
+                        local tags = slot:FindFirstChild("Tags")
+                        if tags then
+                            local playerTag = tags:FindFirstChild(player.Name)
+                            if playerTag and playerTag:IsA("ObjectValue") and playerTag.Value == player then
+                                enlargeBossTorsos(slot)
+                            end
+                        end
+                    end
+                end
+            end
+            task.wait(1)
+        end
+    end)
+end
+
+-- Create Window
+local Window = Rayfield:CreateWindow({
+    Name = "Boss Torso Enlarger",
+    LoadingTitle = "Loading Boss Torso Enlarger...",
+    LoadingSubtitle = "By ChatGPT",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "BossTorsoEnlarger",
+        FileName = "Config"
+    },
+    Discord = {
+        Enabled = false
+    }
+})
+
+-- Create Tab
+local MainTab = Window:CreateTab("Main")
+
+-- Add Toggle
+MainTab:CreateToggle({
+    Name = "Enable Enlarger",
+    CurrentValue = false,
+    Flag = "ToggleEnlarger",
+    Callback = function(value)
+        ToggleRunning = value
+        if ToggleRunning then
+            startLoop()
+        else
+            -- Loop will stop naturally because ToggleRunning = false
+            if LoopThread then
+                task.cancel(LoopThread)
+                LoopThread = nil
+            end
+        end
+    end
+})
